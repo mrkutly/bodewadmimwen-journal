@@ -1,0 +1,21 @@
+type Word {
+  word: String!
+  definition: String!
+  type: WordType!
+  notes: [Note!]! @relation
+}
+
+type Note {
+  title: String!
+  content: String!
+  word: Word!
+}
+
+enum WordType {
+  VERB
+  NOUN
+}
+
+type Query {
+  words: [Word!]!
+}
