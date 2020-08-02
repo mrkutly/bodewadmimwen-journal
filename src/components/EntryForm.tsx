@@ -1,6 +1,5 @@
-import React from "react";
+import React, { useEffect } from "react";
 import styled from "styled-components";
-import { Link as GatsbyLink } from "gatsby";
 import {
   Flash,
   Form,
@@ -8,69 +7,83 @@ import {
   Select,
   PrimaryButton,
   TertiaryButton,
-  styleLink,
 } from "waskode";
 import { NoteInputType, WordType } from "../types";
+import Link from "./Link";
 import NoteInput from "./NoteInput";
 import useForm from "../hooks/useForm";
-
-const Link = styleLink(GatsbyLink);
 
 interface FormData {
   word?: string;
   translation?: string;
   type?: WordType | "";
-  notes: NoteInputType[];
+  notes: NoteInputType | null;
 }
 
-const EntryForm = ({ entry }) => {
-  const initialData: FormData = {
+interface EntryFormProps {
+  entry?: FormData & { _id: string };
+}
+
+const EntryForm = ({ entry }: EntryFormProps) => {
+  const initialData: FormData = entry ?? {
     word: "",
     translation: "",
     type: "",
-    notes: [] as NoteInputType[],
+    notes: null,
   };
 
-  const { errors, formData, result, status, submit, update, valid } = useForm(
-    "/api/create-word",
-    initialData,
-    (data) => {
-      const { word, translation, type, notes } = data;
-      if ([word, translation, type].includes("")) return false;
-      if (notes.length > 0) {
-        return !notes.some((note) => [note.title, note.content].includes(""));
-      }
-      return true;
+  const formValidator = (data) => {
+    const { word, translation, type, notes } = data;
+    if ([word, translation, type].includes("")) return false;
+    if (notes) {
+      return ![notes.title, notes.content].includes("");
     }
+    return true;
+  };
+
+  const { errors, formData, status, submit, update, valid } = useForm(
+    entry ? "/api/update-word" : "/api/create-word",
+    initialData,
+    formValidator
   );
 
-  const addNote = () => {
+  const addNote = (e) => {
+    e.preventDefault();
     update({
       name: "notes",
-      value: [{ title: "", content: "" }],
+      value: { title: "", content: "" },
     });
   };
 
-  const removeNote = () => {
+  const removeNote = (e) => {
+    e.preventDefault();
     update({
       name: "notes",
-      value: [],
+      value: null,
     });
   };
 
-  const updateNote = (field: string, value: string, idx: number) => {
-    const nextNotes = [...formData.notes];
-    nextNotes[idx][field] = value;
+  const updateNote = (field: string, value: string) => {
+    const nextNotes = {
+      ...formData.notes,
+      [field]: value,
+    };
     update({ name: "notes", value: nextNotes });
   };
 
-  const noteAdded = formData.notes.length > 0;
+  const noteAdded = !!formData.notes;
+
+  useEffect(() => {
+    if (status === "SUCCESS") {
+      window.scrollTo({ top: 0 });
+    }
+  }, [status]);
 
   return (
     <>
       {status === "SUCCESS" && (
         <Flash type="success" style={{ width: "80%", margin: "24px auto" }}>
-          Entry added! Go back <Link to="/">here</Link> to see all entries.
+          Entry saved! Go back <Link to="/">here</Link> to see all entries.
         </Flash>
       )}
       {status === "REJECTED" && (
@@ -109,23 +122,18 @@ const EntryForm = ({ entry }) => {
           ]}
           validationError={formData.type === "" && "Required"}
         />
-        {formData.notes.map((note, idx) => (
-          <NoteInput
-            key={`note-${idx}`}
-            note={note}
-            idx={idx}
-            updateNote={updateNote}
-          />
-        ))}
+        {noteAdded && (
+          <NoteInput note={formData.notes} updateNote={updateNote} />
+        )}
         <ButtonWrapperStyles>
           <TertiaryButton onClick={noteAdded ? removeNote : addNote}>
             {noteAdded ? "Delete Note" : "Add note +"}
           </TertiaryButton>
           <PrimaryButton
             type="submit"
-            disabled={!valid || status === "PENDING"}
+            disabled={!valid || ["PENDING", "SUCCESS"].includes(status)}
           >
-            Submit
+            {status === "SUCCESS" ? "Success!" : "Save"}
           </PrimaryButton>
         </ButtonWrapperStyles>
       </Form>

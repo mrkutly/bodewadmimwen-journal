@@ -2,6 +2,7 @@ import React, { Fragment, useState, useEffect } from "react";
 import axios from "axios";
 import styled from "styled-components";
 import { Loading, TextInput } from "waskode";
+import Link from "./Link";
 import { Word } from "../types";
 
 type Status = "LOADING" | "IDLE" | "ERROR";
@@ -46,18 +47,21 @@ const JournalEntries = () => {
             <li key={word._id}>
               <h2>
                 {word.word} - {word.translation}
+                <Link to="/edit" state={{ entry: word }}>
+                  ✏️
+                </Link>
               </h2>
-              {word.notes.data.map((note) => (
-                <Fragment key={note._id}>
+              {word.notes && (
+                <>
                   <h4>
-                    {note.title} |{" "}
-                    {new Date(note._ts / 1000).toLocaleDateString()}
+                    {word.notes.title} |{" "}
+                    {new Date(word._ts / 1000).toLocaleDateString()}
                   </h4>
-                  {note.content.split("\n").map((line) => (
+                  {word.notes.content.split("\n").map((line) => (
                     <p key={line}>{line}</p>
                   ))}
-                </Fragment>
-              ))}
+                </>
+              )}
             </li>
           ))}
         </ul>

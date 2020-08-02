@@ -8,13 +8,10 @@ const WORDS_QUERY = `
 				_ts
 				word 
 				translation
+				type
 				notes {
-					data {
-						_id
-						_ts
-						title
-						content
-					}
+					title
+					content
 				}
 			}
 		}
@@ -23,7 +20,7 @@ const WORDS_QUERY = `
 
 exports.handler = async () => {
   const { data, errors } = await sendQuery(WORDS_QUERY);
-
+	
   if (errors) {
     return {
       statusCode: 500,

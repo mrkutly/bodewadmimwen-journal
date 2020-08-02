@@ -1,11 +1,8 @@
 import React, { useEffect } from "react";
-import { Link as GatsbyLink } from "gatsby";
-import { styleLink } from "waskode";
 import styled from "styled-components";
+import Link from "./Link";
 import SEO from "./SEO";
 import { randomColor, randomShape } from "../utils";
-
-const Link = styleLink(GatsbyLink);
 
 const randomShapesStyles = () => {
   let style = "";

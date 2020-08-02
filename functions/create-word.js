@@ -1,17 +1,15 @@
 const sendQuery = require('./utils/sendQuery');
 
 const CREATE_WORD_MUTATION = `
-	mutation CREATE_WORD($translation: String!, $word: String!, $type: WordType!, $notes: [NoteInput]) {
-		createWord(data:{ translation: $translation, word: $word, type: $type, notes: { create: $notes } }) {
+	mutation CREATE_WORD($translation: String!, $word: String!, $type: WordType!, $notes: NoteInput) {
+		createWord(data:{ translation: $translation, word: $word, type: $type, notes: $notes }) {
 			_id
 			word
 			translation
 			type 
 			notes {
-				data {
-					title
-					content
-				}
+				title
+				content
 			}
 		}
 	}

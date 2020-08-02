@@ -2,13 +2,12 @@ type Word {
   word: String!
   translation: String!
   type: WordType!
-  notes: [Note!]! @relation
+  notes: Note
 }
 
-type Note {
+type Note @embedded {
   title: String!
   content: String!
-  word: Word!
 }
 
 enum WordType {

@@ -1,9 +1,9 @@
 import { useEffect, useState, FormEvent } from 'react';
 import axios from 'axios';
-import { WordResult, NoteResult } from '../types';
+import { WordResult } from '../types';
 import { formatErrors } from '../utils';
 
-type Result = NoteResult | WordResult;
+type Result = WordResult;
 type Status = 'REJECTED' | 'PENDING' | 'IDLE' | 'SUCCESS';
 
 const useForm = <Data>(endpoint: string, initialData: Data, validator: (data: Data) => boolean) => {
@@ -41,10 +41,6 @@ const useForm = <Data>(endpoint: string, initialData: Data, validator: (data: Da
 			}
 		}
 	};
-
-	useEffect(() => {
-		if (status === 'SUCCESS') setFormData(initialData);
-	}, [status]);
 
 	return {
 		errors,

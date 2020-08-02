@@ -4,7 +4,7 @@ export type Word = {
 	word: string;
 	translation: string;
 	type: WordType;
-	notes: NoteResult;
+	notes?: Note;
 };
 
 export type WordType = "VERB" | "NOUN" | "PHRASE";
@@ -20,10 +20,6 @@ export type Note = {
 export interface NoteInputType {
 	title: string;
 	content: string;
-}
-
-export interface NoteResult {
-	data: Note[];
 }
 
 export interface WordResult {
