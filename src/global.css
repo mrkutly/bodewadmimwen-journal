@@ -1,0 +1,9 @@
+body {
+  color: var(--neutral-500);
+  background: #ffffff55;
+}
+
+main {
+  max-width: 90vw;
+  margin: 0 auto;
+}

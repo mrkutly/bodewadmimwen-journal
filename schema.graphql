@@ -1,6 +1,6 @@
 type Word {
   word: String!
-  definition: String!
+  translation: String!
   type: WordType!
   notes: [Note!]! @relation
 }
@@ -14,6 +14,7 @@ type Note {
 enum WordType {
   VERB
   NOUN
+  PHRASE
 }
 
 type Query {

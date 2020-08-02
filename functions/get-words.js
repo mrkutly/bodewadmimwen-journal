@@ -5,11 +5,13 @@ const WORDS_QUERY = `
 		words {
 			data {
 				_id
+				_ts
 				word 
-				definition
+				translation
 				notes {
 					data {
 						_id
+						_ts
 						title
 						content
 					}
